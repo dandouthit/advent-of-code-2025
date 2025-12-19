@@ -1,23 +1,22 @@
-position = 50 # initial position on the dial is 50
-password_counter_inc = 0
-with open("input/day1.txt", 'r') as file:
-    for line in file:
-        direction = line[0]
+with open("input/day1.txt", "r") as file:
+    lines = file.readlines()
 
-        if str(direction) == "L":
-            movement = (int(line[1:]) % 100) * -1
-        elif str(direction) == "R":
-            movement = (int(line[1:]) % 100)
+rotations = [(rote[0], int(rote[1:])) for rote in lines]
 
-        new_position = position + movement
-        if new_position < 0:
-            position = 100 + new_position
-        elif new_position > 99:
-            position = new_position - 100
-        else:
-            position = new_position
+zeros = 0
+dial = 50
 
-        if position == 0:
-            password_counter_inc += 1
+for rote in rotations:
+    clicks, rotation = divmod(rote[1], 100)
+    zeros += clicks
 
-print("Ending password is: " + str(password_counter_inc))
+    if rote[0] == "R":
+        if dial + rotation >= 100:
+            zeros += 1
+        dial = (dial + rotation) % 100
+    else:
+        if dial and dial - rotation <= 0:
+            zeros += 1
+        dial = (dial - rotation) % 100
+
+print(zeros)
